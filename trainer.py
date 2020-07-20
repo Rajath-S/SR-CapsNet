@@ -96,7 +96,9 @@ class Trainer(object):
             self.model = ConvNet(config.planes, DATASET_CONFIGS[config.dataset], config.num_caps, config.caps_size, config.depth, mode=self.mode).to(device)
         elif config.name.startswith('smallnet'):
             assert self.mode in ['SR', 'DR', 'EM']
-            self.model = SmallNet(DATASET_CONFIGS[config.dataset], mode=self.mode).to(device)
+            self.model = s(DATASET_CONFIGS[config.dataset], mode=self.mode).to(device)
+        elif config.name.startswith('MyModel')
+             self.model= MyModel()
         else:
             raise NotImplementedError("Unknown model prefix")
 
