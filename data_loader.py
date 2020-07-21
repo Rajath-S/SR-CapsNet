@@ -26,6 +26,22 @@ def get_train_valid_loader(data_dir,
                  transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))]
         dataset = datasets.CIFAR10(data_dir, train=True, download=True,
                 transform=transforms.Compose(trans))
+    elif dataset=="stl10":
+      trans = [transforms.ToTensor(),
+              transforms.Resize(32),
+                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))]
+      dataset=datasets.STL10(data_dir,
+                              split='train',
+                              transform=transforms.Compose(trans),
+                              download=True)
+    elif dataset=="mnist":
+      dataset=datasets.MNIST(data_dir, train=True, download=True,
+                                transform=transforms.Compose([
+                                  transforms.ToTensor(),
+                                  transforms.Normalize(
+                                    (0.1307,), (0.3081,))
+                                ]))
+        
 
     elif dataset == "svhn":
         normalize = transforms.Normalize(mean=[x / 255.0 for x in[109.9, 109.7, 113.8]],
@@ -103,6 +119,18 @@ def get_test_loader(data_dir,
                  normalize]
         dataset = datasets.SVHN(data_dir, split='test', download=True,
                 transform=transforms.Compose(trans))
+    elif dataset=="mnist":
+      dataset=datasets.MNIST(data_dir, train=False, download=True,
+                                transform=transforms.Compose([
+                                  transforms.ToTensor(),
+                                  transforms.Normalize(
+                                    (0.1307,), (0.3081,))
+                                ]))
+    elif dataset=="stl10":
+        trans = [transforms.ToTensor(),
+                transforms.Resize((32,32)),
+                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))]
+        dataset=datasets.STL10(data_dir,split='test',transform=transforms.Compose(trans),download=True)
 
     elif dataset == "smallnorb":
         trans = [transforms.Resize(48),
@@ -128,6 +156,8 @@ DATASET_CONFIGS = {
     'cifar10': {'size': 32, 'channels': 3, 'classes': 10},
     'svhn': {'size': 32, 'channels': 3, 'classes': 10},
     'smallnorb': {'size': 32, 'channels': 1, 'classes': 5},
+    'mnist':{'size':28, 'channels':1, 'classes':10},
+    'stl10':{'size':96, 'channels': 3, 'classes': 10},
 }
 
 VIEWPOINT_EXPS = ['azimuth', 'elevation']

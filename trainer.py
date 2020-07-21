@@ -86,6 +86,8 @@ class Trainer(object):
             self.mode = 'AVG'
         elif config.name.endswith('fc'):
             self.mode = 'FC'
+        # elif config.name.endswith('nothing'):
+        #     print("no routing")
         else:
             raise NotImplementedError("Unknown model postfix")
 
@@ -97,8 +99,8 @@ class Trainer(object):
         elif config.name.startswith('smallnet'):
             assert self.mode in ['SR', 'DR', 'EM']
             self.model = s(DATASET_CONFIGS[config.dataset], mode=self.mode).to(device)
-        elif config.name.startswith('MyModel')
-             self.model= MyModel()
+        elif config.name.startswith('mymodel'):
+             self.model= MyModel().to(device)
         else:
             raise NotImplementedError("Unknown model prefix")
 
@@ -108,7 +110,7 @@ class Trainer(object):
 
         self.loss = nn.CrossEntropyLoss().to(device)
         if self.mode in ['DR', 'EM', 'SR']:
-            if config.dataset in ['cifar10', 'svhn']:
+            if config.dataset in ['cifar10', 'svhn','mnist']:
                 print("using NLL loss")
                 self.loss = nn.NLLLoss().to(device)
             elif config.dataset == "smallnorb":
@@ -123,11 +125,14 @@ class Trainer(object):
                     self.loss = nn.NLLLoss().to(device)
 
         self.params = self.model.parameters()
+        # print(self.params)
+        # for parameter in self.model.parameters():
+        #     print(parameter)
         self.optimizer = optim.SGD(self.params, lr=self.lr, momentum=self.momentum, weight_decay=self.weight_decay)
 
-        if config.dataset == "cifar10":
+        if config.dataset == "cifar10" or "stl10":
             self.scheduler = optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[150, 250], gamma=0.1)
-        elif config.dataset == "svhn":
+        elif config.dataset == "svhn" or "mnist":
             self.scheduler = optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[100, 150], gamma=0.1)
         elif config.dataset == "smallnorb":
             self.scheduler = optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[100, 150], gamma=0.1)
